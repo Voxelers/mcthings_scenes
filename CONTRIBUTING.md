@@ -19,6 +19,6 @@ McThings is yet a small project so just open a [new issue][github-new-issue] for
 
 
 [coc]: https://github\.com/juntosdesdecasa/mcthings_scenes/blob/master/CODE_OF_CONDUCT.md
-[github-issues]: https://github\.com/juntosdesdecasa/mcthings_scenes/issues
-[github-new-issue]: https://github\.com/juntosdesdecasa/mcthings_scenes/issues/new
+[github-issues]: https://github\.com/juntosdesdecasa/mcthings/issues
+[github-new-issue]: https://github\.com/juntosdesdecasa/mcthings/issues/new
 [github]: https://github\.com/juntosdesdecasa/mcthings_scenes
