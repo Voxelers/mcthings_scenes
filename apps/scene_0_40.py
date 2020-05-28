@@ -4,7 +4,6 @@
 # Author (©): Alvaro del Castillo
 
 import sys
-import time
 
 import mcpi.block
 import mcpi.minecraft
@@ -21,6 +20,9 @@ from mcthings.schematic import Schematic
 from mcthings.server import Server
 from mcthings.sphere import SphereHollow
 from mcthings.town import Town
+
+from mcthings.decorators.light_decorator import LightDecorator
+from mcthings_extra.decorators.villager_decorator import VillagerDecorator
 
 BUILDER_NAME = "ElasticExplorer"
 
@@ -100,6 +102,10 @@ def main():
         town_right.house_mirror = True
         town_right.houses = houses
         town_right.build()
+
+        town_right.add_decorator(LightDecorator)
+        town_right.add_decorator(VillagerDecorator)
+        town_right.decorate()
 
         p = line_left.position
         # 2 line width
