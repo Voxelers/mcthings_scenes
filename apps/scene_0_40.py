@@ -41,7 +41,7 @@ def main():
         if False:
             # Load the Schematic to test it
             s = Schematic(Vec3(pos.x+20, pos.y, pos.z))
-            s.file_path = "schematics/scene_0_30.schematic"
+            s.file_path = "schematics/scene_0_40.schematic"
             s.build()
             s
 
@@ -215,7 +215,7 @@ def main():
         stadium.build()
 
         # Save as Schematic
-        Scene.to_schematic("schematics/scene_0_30.schematic")
+        Scene.to_schematic("schematics/scene_0_40.schematic")
 
     except mcpi.connection.RequestError:
         print("Can't connect to Minecraft server " + MC_SEVER_HOST)
