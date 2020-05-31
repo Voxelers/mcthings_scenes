@@ -17,12 +17,11 @@ from mcthings.fence import Fence
 from mcthings.line import Line
 from mcthings.platform import Platform
 from mcthings.pyramid import PyramidHollow
-from mcthings.scene import Scene
 from mcthings.river import River
 from mcthings.server import Server
 from mcthings.sphere import SphereHollow
-from mcthings.thing import Thing
 from mcthings.town import Town
+from mcthings.world import World
 
 BUILDER_NAME = "ElasticExplorer"
 
@@ -62,15 +61,16 @@ class SceneInteractive:
 
     @classmethod
     def move_step(cls, forward=True):
+        scene = World.scenes[0]
 
         if forward:
-            if cls.active_thing + 1 < len(Scene.things):
+            if cls.active_thing + 1 < len(scene.things):
                 cls.active_thing += 1
         else:
             if cls.active_thing > 0:
                 cls.active_thing -= 1
 
-        return Scene.things[cls.active_thing]
+        return scene.things[cls.active_thing]
 
     @classmethod
     def build_river(cls):
@@ -272,18 +272,18 @@ class SceneInteractive:
         cls.build_stadium()
 
         # Hide the scene to show it with the interactive tools
-        Scene.unbuild()
+        World.scenes[0].unbuild()
 
     @classmethod
     def main(cls):
         try:
-            server = Server(MC_SEVER_HOST, MC_SEVER_PORT)
+            World.connect(Server(MC_SEVER_HOST, MC_SEVER_PORT))
 
-            server.mc.postToChat("Building an Interactive Scene")
-            cls.pos = server.mc.entity.getTilePos(server.mc.getPlayerEntityId(BUILDER_NAME))
+            World.server.postToChat("Building an Interactive Scene")
+            cls.pos = World.server.entity.getTilePos(World.server.getPlayerEntityId(BUILDER_NAME))
             cls.pos.x += 1
 
-            mc = server.mc
+            mc = World.server
             entity_id = mc.getPlayerEntityId(BUILDER_NAME)
             mc.entity.getPos(entity_id)
 
@@ -300,7 +300,7 @@ class SceneInteractive:
             # Put the player in the platform
             p = platform.end_position
             player_pos = Vec3(p.x, p.y + 1, p.z - 4)
-            server.mc.entity.setTilePos(server.mc.getPlayerEntityId(BUILDER_NAME), player_pos)
+            World.server.entity.setTilePos(World.server.getPlayerEntityId(BUILDER_NAME), player_pos)
 
             # Put a blocks over the platform to change the block type to be used
             block = Block(Vec3(player_pos.x - (top_size - 1),
@@ -324,13 +324,15 @@ class SceneInteractive:
             block.block = mcpi.block.BRICK_BLOCK
             block.build()
 
+            scene = World.scenes[0]
+
             while True:
                 hits = mc.events.pollBlockHits()
                 if len(hits) > EVENTS_PER_CLICK:
                     # Unbuild the current step and select the previous one
                     # Except the platform
                     if cls.active_thing > 0:
-                        thing = Scene.things[cls.active_thing]
+                        thing = scene.things[cls.active_thing]
                         logging.info("Unbuilt" + str(thing))
                         thing.unbuild()
                     cls.move_step(forward=False)
@@ -339,7 +341,7 @@ class SceneInteractive:
                     logging.info("Moved to thing and build" + str(thing))
                     #  Get the block hit
                     hit = hits[0]
-                    block_hit = server.mc.getBlock(hit.pos.x, hit.pos.y, hit.pos.z)
+                    block_hit = World.server.getBlock(hit.pos.x, hit.pos.y, hit.pos.z)
                     if block_hit != mcpi.block.GLASS.id:
                         build_block = thing.block
                         thing.block = block_hit
@@ -349,7 +351,7 @@ class SceneInteractive:
                     else:
                         thing.build()
                 else:
-                    thing = Scene.things[cls.active_thing]
+                    thing = scene.things[cls.active_thing]
                     logging.info("No actions. In " + str(thing))
                 time.sleep(CHECK_EVENTS_TIME)
 

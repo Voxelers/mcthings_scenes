@@ -11,6 +11,7 @@ import mcpi.minecraft
 
 from mcthings.scene import Scene
 from mcthings.server import Server
+from mcthings.world import World
 
 BUILDER_NAME = "ElasticExplorer"
 
@@ -20,22 +21,21 @@ MC_SEVER_PORT = 4711
 
 def main():
     try:
-        server = Server(MC_SEVER_HOST, MC_SEVER_PORT)
-        scene_path = "scene_sphere_drawing.mct"
-
-        server.mc.postToChat("Building a scene from " + scene_path)
-        pos = server.mc.entity.getTilePos(server.mc.getPlayerEntityId(BUILDER_NAME))
+        World.connect(Server(MC_SEVER_HOST, MC_SEVER_PORT))
+        scene_path = "scene_basic.mct"
+        World.server.postToChat("Building a scene from " + scene_path)
+        pos = World.server.entity.getTilePos(World.server.getPlayerEntityId(BUILDER_NAME))
         pos.z += 10
 
-        server.mc.postToChat("Cleaning a scene")
+        World.server.postToChat("Cleaning a scene")
 
         # Let's load the scene and build it
-        Scene.load(scene_path)
+        scene = Scene()
+        scene.load(scene_path)
         # Move the scene to the player position
-        Scene.reposition(pos)
-        Scene.build()
-        time.sleep(3)
-        Scene.unbuild()
+        scene.reposition(pos)
+        scene.build()
+        scene.unbuild()
 
     except mcpi.connection.RequestError:
         print("Can't connect to Minecraft server " + MC_SEVER_HOST)

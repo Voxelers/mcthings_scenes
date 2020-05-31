@@ -13,11 +13,13 @@ from mcpi.vec3 import Vec3
 
 from mcthings.server import Server
 from mcthings.sphere import SphereHollow
+from mcthings.world import World
 
 BUILDER_NAME = "ElasticExplorer"
 
-MC_SEVER_HOST = "javierete.com"
-MC_SEVER_PORT = 9711
+MC_SEVER_HOST = "localhost"
+MC_SEVER_PORT = 4711
+
 METEORS_INITIAL_HEIGHT = 50
 MOVE_UPDATES_TIME = 0.3
 MOVE_DISTANCE = 10
@@ -69,10 +71,10 @@ class SceneMeteors:
     @classmethod
     def main(cls):
         try:
-            server = Server(MC_SEVER_HOST, MC_SEVER_PORT)
+            World.connect(Server(MC_SEVER_HOST, MC_SEVER_PORT))
 
-            server.mc.postToChat("Building Meteors Scene")
-            cls.pos = server.mc.entity.getTilePos(server.mc.getPlayerEntityId(BUILDER_NAME))
+            World.server.postToChat("Building Meteors Scene")
+            cls.pos = World.server.entity.getTilePos(World.server.getPlayerEntityId(BUILDER_NAME))
             cls.pos.x += 1
 
             cls.build_scene()

@@ -15,6 +15,7 @@ from mcthings.house import House
 from mcthings.river import River
 from mcthings.schematic import Schematic
 from mcthings.server import Server
+from mcthings.world import World
 
 BUILDER_NAME = "ElasticExplorer"
 
@@ -24,10 +25,10 @@ MC_SEVER_PORT = 4711
 
 def main():
     try:
-        server = Server(MC_SEVER_HOST, MC_SEVER_PORT)
+        World.connect(Server(MC_SEVER_HOST, MC_SEVER_PORT))
 
-        server.mc.postToChat("Building a Scene with several Things")
-        pos = server.mc.entity.getTilePos(server.mc.getPlayerEntityId(BUILDER_NAME))
+        World.server.postToChat("Building a Scene with several Things")
+        pos = World.server.entity.getTilePos(World.server.getPlayerEntityId(BUILDER_NAME))
         pos.x += 1
 
         river_width = 10
@@ -58,14 +59,15 @@ def main():
         house.build()
 
         # Let's persist the scene
-        Scene.save("scene_basic.mct")
+        scene = World.scenes[0]
+        scene.save("scene_basic.mct")
 
         # Save as Schematic
-        Scene.to_schematic("../schematics/scene_basic.schematic")
+        scene.to_schematic("schematics/scene_basic.schematic")
 
         # Load the Schematic to test it
         s = Schematic(Vec3(pos.x+20, pos.y, pos.z))
-        s.file_path = "../schematics/scene_basic.schematic"
+        s.file_path = "schematics/scene_basic.schematic"
         s.build()
 
     except mcpi.connection.RequestError:

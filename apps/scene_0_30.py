@@ -21,6 +21,7 @@ from mcthings.schematic import Schematic
 from mcthings.server import Server
 from mcthings.sphere import SphereHollow
 from mcthings.town import Town
+from mcthings.world import World
 
 BUILDER_NAME = "ElasticExplorer"
 
@@ -30,10 +31,10 @@ MC_SEVER_PORT = 4711
 
 def main():
     try:
-        server = Server(MC_SEVER_HOST, MC_SEVER_PORT)
+        World.connect(Server(MC_SEVER_HOST, MC_SEVER_PORT))
 
-        server.mc.postToChat("Building a Scene with several Things")
-        pos = server.mc.entity.getTilePos(server.mc.getPlayerEntityId(BUILDER_NAME))
+        World.server.postToChat("Building a Scene with several Things")
+        pos = World.server.entity.getTilePos(World.server.getPlayerEntityId(BUILDER_NAME))
         pos.x += 1
 
         if False:
@@ -209,7 +210,7 @@ def main():
         stadium.build()
 
         # Save as Schematic
-        Scene.to_schematic("schematics/scene_0_30.schematic")
+        World.scenes[0].to_schematic("schematics/scene_0_30.schematic")
 
     except mcpi.connection.RequestError:
         print("Can't connect to Minecraft server " + MC_SEVER_HOST)
