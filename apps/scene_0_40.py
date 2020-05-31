@@ -14,15 +14,15 @@ from mcthings.building import Building
 from mcthings.fence import Fence
 from mcthings.line import Line
 from mcthings.pyramid import PyramidHollow
-from mcthings.scene import Scene
 from mcthings.river import River
 from mcthings.schematic import Schematic
 from mcthings.server import Server
 from mcthings.sphere import SphereHollow
 from mcthings.town import Town
+from mcthings.world import World
 
 from mcthings.decorators.light_decorator import LightDecorator
-from mcthings.world import World
+from mcthings.decorators.border_decorator import BorderDecorator
 from mcthings_extra.decorators.villager_decorator import VillagerDecorator
 
 BUILDER_NAME = "ElasticExplorer"
@@ -45,8 +45,6 @@ def main():
             s.file_path = "schematics/scene_0_40.schematic"
             s.build()
             s
-
-        # Scene 0.30
 
         # River
 
@@ -216,7 +214,14 @@ def main():
         stadium.build()
 
         # Save as Schematic
-        World.scenes[0].to_schematic("schematics/scene_0_40.schematic")
+        init_scene = World.first_scene()
+        init_scene.to_schematic("schematics/scene_0_40.schematic")
+
+        # Let's add a railway around the scene
+        border = BorderDecorator
+        border.block = mcpi.block.RAIL
+        init_scene.add_decorator(border)
+        init_scene.decorate()
 
     except mcpi.connection.RequestError:
         print("Can't connect to Minecraft server " + MC_SEVER_HOST)
