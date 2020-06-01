@@ -210,7 +210,7 @@ def main():
         stadium.build()
 
         # Save as Schematic
-        World.scenes[0].to_schematic("schematics/scene_0_30.schematic")
+        World.first_scene().to_schematic("schematics/scene_0_30.schematic")
 
     except mcpi.connection.RequestError:
         print("Can't connect to Minecraft server " + MC_SEVER_HOST)

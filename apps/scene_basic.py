@@ -59,7 +59,7 @@ def main():
         house.build()
 
         # Let's persist the scene
-        scene = World.scenes[0]
+        scene = World.first_scene()
         scene.save("scene_basic.mct")
 
         # Save as Schematic

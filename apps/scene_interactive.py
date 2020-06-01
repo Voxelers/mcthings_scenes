@@ -61,7 +61,7 @@ class SceneInteractive:
 
     @classmethod
     def move_step(cls, forward=True):
-        scene = World.scenes[0]
+        scene = World.first_scene()
 
         if forward:
             if cls.active_thing + 1 < len(scene.things):
@@ -272,7 +272,7 @@ class SceneInteractive:
         cls.build_stadium()
 
         # Hide the scene to show it with the interactive tools
-        World.scenes[0].unbuild()
+        World.first_scene().unbuild()
 
     @classmethod
     def main(cls):
@@ -324,7 +324,7 @@ class SceneInteractive:
             block.block = mcpi.block.BRICK_BLOCK
             block.build()
 
-            scene = World.scenes[0]
+            scene = World.first_scene()
 
             while True:
                 hits = mc.events.pollBlockHits()
