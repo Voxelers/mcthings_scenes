@@ -4,7 +4,6 @@
 # Author (©): Alvaro del Castillo
 
 import sys
-import time
 
 import mcpi.block
 import mcpi.minecraft
@@ -15,10 +14,9 @@ from mcthings.building import Building
 from mcthings.fence import Fence
 from mcthings.line import Line
 from mcthings.pyramid import PyramidHollow
-from mcthings.scene import Scene
+from mcthings.renderers.raspberry_pi import RaspberryPi
 from mcthings.river import River
 from mcthings.schematic import Schematic
-from mcthings.server import Server
 from mcthings.sphere import SphereHollow
 from mcthings.town import Town
 from mcthings.world import World
@@ -31,10 +29,10 @@ MC_SEVER_PORT = 4711
 
 def main():
     try:
-        World.connect(Server(MC_SEVER_HOST, MC_SEVER_PORT))
+        World.renderer = RaspberryPi(MC_SEVER_HOST, MC_SEVER_PORT)
 
-        World.server.postToChat("Building a Scene with several Things")
-        pos = World.server.entity.getTilePos(World.server.getPlayerEntityId(BUILDER_NAME))
+        World.renderer.post_to_chat("Building a Scene with several Things")
+        pos = World.renderer.server.mc.entity.getTilePos(World.renderer.server.mc.getPlayerEntityId(BUILDER_NAME))
         pos.x += 1
 
         if False:
@@ -58,14 +56,18 @@ def main():
         # Bridges are created for crossing the river
         # Position them and 1/4 and 3/4 of the length of the river
 
-        bridge_start = Bridge(Vec3(pos.x - 1, pos.y, pos.z + (river.length * (1 / 4))))
+        bridge_start = Bridge(Vec3(pos.x - 1,
+                                   pos.y,
+                                   pos.z + round(river.length * (1 / 4))))
         bridge_start.height = 3
         bridge_start.large = river.width + 2
         bridge_start.width = 2
         bridge_start.block = mcpi.block.WOOD
         bridge_start.build()
 
-        bridge_end = Bridge(Vec3(pos.x - 1, pos.y, pos.z + (river.length * (3 / 4))))
+        bridge_end = Bridge(Vec3(pos.x - 1,
+                                 pos.y,
+                                 pos.z + round(river.length * (3 / 4))))
         bridge_end.height = 3
         bridge_end.large = river.width + 2
         bridge_end.width = 2
@@ -127,7 +129,7 @@ def main():
         temple_width = 2 * temple_height - 1
 
         p = line_temple.end_position
-        p_z = p.z - temple_width / 2
+        p_z = p.z - round(temple_width / 2)
         p_x = p.x - temple_width
         temple = PyramidHollow(Vec3(p_x, p.y, p_z))
         temple.height = temple_height
@@ -180,7 +182,9 @@ def main():
         # Now the buildings
         building_width = 10
         p = line_building.end_position
-        building1 = Building(Vec3(p.x, p.y, p.z - building_width / 2))
+        building1 = Building(Vec3(p.x,
+                                  p.y,
+                                  p.z - round(building_width / 2)))
         building1.width = building_width
         building1.house_mirror = True
         building1.build()

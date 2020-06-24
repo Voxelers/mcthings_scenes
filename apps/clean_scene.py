@@ -4,13 +4,12 @@
 # Author (©): Alvaro del Castillo
 
 import sys
-import time
 
 import mcpi.block
 import mcpi.minecraft
+from mcthings.renderers.raspberry_pi import RaspberryPi
 
 from mcthings.scene import Scene
-from mcthings.server import Server
 from mcthings.world import World
 
 BUILDER_NAME = "ElasticExplorer"
@@ -21,13 +20,13 @@ MC_SEVER_PORT = 4711
 
 def main():
     try:
-        World.connect(Server(MC_SEVER_HOST, MC_SEVER_PORT))
+        World.renderer = RaspberryPi(MC_SEVER_HOST, MC_SEVER_PORT)
         scene_path = "scene_basic.mct"
-        World.server.postToChat("Building a scene from " + scene_path)
-        pos = World.server.entity.getTilePos(World.server.getPlayerEntityId(BUILDER_NAME))
+        World.renderer.post_to_chat("Building a scene from " + scene_path)
+        pos = World.renderer.server.mc.entity.getTilePos(World.renderer.server.mc.getPlayerEntityId(BUILDER_NAME))
         pos.z += 10
 
-        World.server.postToChat("Cleaning a scene")
+        World.renderer.post_to_chat("Cleaning a scene")
 
         # Let's load the scene and build it
         scene = Scene()

@@ -2,6 +2,7 @@
 
 # Licensed under the terms of http://www.apache.org/licenses/LICENSE-2.0
 # Author (©): Alvaro del Castillo
+
 import logging
 import sys
 import time
@@ -9,9 +10,8 @@ import time
 import mcpi.block
 import mcpi.minecraft
 from mcpi.vec3 import Vec3
+from mcthings.renderers.raspberry_pi import RaspberryPi
 
-
-from mcthings.server import Server
 from mcthings.sphere import SphereHollow
 from mcthings.world import World
 
@@ -71,10 +71,10 @@ class SceneMeteors:
     @classmethod
     def main(cls):
         try:
-            World.connect(Server(MC_SEVER_HOST, MC_SEVER_PORT))
+            World.renderer = RaspberryPi(MC_SEVER_HOST, MC_SEVER_PORT)
 
-            World.server.postToChat("Building Meteors Scene")
-            cls.pos = World.server.entity.getTilePos(World.server.getPlayerEntityId(BUILDER_NAME))
+            World.renderer.post_to_chat("Building Meteors Scene")
+            cls.pos = World.renderer.server.mc.entity.getTilePos(World.renderer.server.mc.getPlayerEntityId(BUILDER_NAME))
             cls.pos.x += 1
 
             cls.build_scene()

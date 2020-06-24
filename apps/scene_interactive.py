@@ -2,6 +2,7 @@
 
 # Licensed under the terms of http://www.apache.org/licenses/LICENSE-2.0
 # Author (©): Alvaro del Castillo
+
 import logging
 import sys
 import time
@@ -17,8 +18,8 @@ from mcthings.fence import Fence
 from mcthings.line import Line
 from mcthings.platform import Platform
 from mcthings.pyramid import PyramidHollow
+from mcthings.renderers.raspberry_pi import RaspberryPi
 from mcthings.river import River
-from mcthings.server import Server
 from mcthings.sphere import SphereHollow
 from mcthings.town import Town
 from mcthings.world import World
@@ -89,7 +90,7 @@ class SceneInteractive:
         pos = cls.pos
         river = cls.river
 
-        bridge_start = Bridge(Vec3(pos.x - 1, pos.y, pos.z + (river.length * (1 / 4))))
+        bridge_start = Bridge(Vec3(pos.x - 1, pos.y, pos.z + round(river.length * (1 / 4))))
         cls.bridge_start = bridge_start
         bridge_start.height = 3
         bridge_start.large = river.width + 2
@@ -97,7 +98,7 @@ class SceneInteractive:
         bridge_start.block = mcpi.block.WOOD
         bridge_start.build()
 
-        bridge_end = Bridge(Vec3(pos.x - 1, pos.y, pos.z + (river.length * (3 / 4))))
+        bridge_end = Bridge(Vec3(pos.x - 1, pos.y, pos.z + round(river.length * (3 / 4))))
         cls.bridge_end = bridge_end
         bridge_end.height = 3
         bridge_end.large = river.width + 2
@@ -170,7 +171,7 @@ class SceneInteractive:
         temple_width = 2 * temple_height - 1
 
         p = line_temple.end_position
-        p_z = p.z - temple_width / 2
+        p_z = p.z - round(temple_width / 2)
         p_x = p.x - temple_width
         temple = PyramidHollow(Vec3(p_x, p.y, p_z))
         temple.height = temple_height
@@ -228,7 +229,7 @@ class SceneInteractive:
         # Now the buildings
         building_width = 10
         p = line_building.end_position
-        building1 = Building(Vec3(p.x, p.y, p.z - building_width / 2))
+        building1 = Building(Vec3(p.x, p.y, p.z - round(building_width / 2)))
         building1.width = building_width
         building1.house_mirror = True
         building1.build()
@@ -277,13 +278,13 @@ class SceneInteractive:
     @classmethod
     def main(cls):
         try:
-            World.connect(Server(MC_SEVER_HOST, MC_SEVER_PORT))
+            World.renderer = RaspberryPi(MC_SEVER_HOST, MC_SEVER_PORT)
 
-            World.server.postToChat("Building an Interactive Scene")
-            cls.pos = World.server.entity.getTilePos(World.server.getPlayerEntityId(BUILDER_NAME))
+            World.renderer.post_to_chat("Building an Interactive Scene")
+            cls.pos = World.renderer.server.mc.entity.getTilePos(World.renderer.server.mc.getPlayerEntityId(BUILDER_NAME))
             cls.pos.x += 1
 
-            mc = World.server
+            mc = World.renderer.server.mc
             entity_id = mc.getPlayerEntityId(BUILDER_NAME)
             mc.entity.getPos(entity_id)
 
@@ -300,7 +301,7 @@ class SceneInteractive:
             # Put the player in the platform
             p = platform.end_position
             player_pos = Vec3(p.x, p.y + 1, p.z - 4)
-            World.server.entity.setTilePos(World.server.getPlayerEntityId(BUILDER_NAME), player_pos)
+            World.renderer.server.mc.entity.setTilePos(World.renderer.server.mc.getPlayerEntityId(BUILDER_NAME), player_pos)
 
             # Put a blocks over the platform to change the block type to be used
             block = Block(Vec3(player_pos.x - (top_size - 1),
@@ -310,7 +311,7 @@ class SceneInteractive:
             block.block = mcpi.block.BEDROCK
             block.build()
 
-            block = Block(Vec3(player_pos.x - (top_size/2 - 1),
+            block = Block(Vec3(player_pos.x - (round(top_size/2) - 1),
                                player_pos.y,
                                player_pos.z + (top_size - 1))
                           )
@@ -341,10 +342,10 @@ class SceneInteractive:
                     logging.info("Moved to thing and build" + str(thing))
                     #  Get the block hit
                     hit = hits[0]
-                    block_hit = World.server.getBlock(hit.pos.x, hit.pos.y, hit.pos.z)
+                    block_hit = World.renderer.server.mc.getBlock(hit.pos.x, hit.pos.y, hit.pos.z)
                     if block_hit != mcpi.block.GLASS.id:
                         build_block = thing.block
-                        thing.block = block_hit
+                        thing.block = mcpi.block.Block(block_hit, 0)
                         thing.build()
                         # Preserve the original block to restore it
                         thing.block = build_block

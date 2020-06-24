@@ -10,11 +10,10 @@ import mcpi.minecraft
 from mcpi.vec3 import Vec3
 
 from mcthings.bridge import Bridge
-from mcthings.scene import Scene
+from mcthings.renderers.raspberry_pi import RaspberryPi
 from mcthings.house import House
 from mcthings.river import River
 from mcthings.schematic import Schematic
-from mcthings.server import Server
 from mcthings.world import World
 
 BUILDER_NAME = "ElasticExplorer"
@@ -25,10 +24,10 @@ MC_SEVER_PORT = 4711
 
 def main():
     try:
-        World.connect(Server(MC_SEVER_HOST, MC_SEVER_PORT))
+        World.renderer = RaspberryPi(MC_SEVER_HOST, MC_SEVER_PORT)
 
-        World.server.postToChat("Building a Scene with several Things")
-        pos = World.server.entity.getTilePos(World.server.getPlayerEntityId(BUILDER_NAME))
+        World.renderer.post_to_chat("Building a Scene with several Things")
+        pos = World.renderer.server.mc.entity.getTilePos(World.renderer.server.mc.getPlayerEntityId(BUILDER_NAME))
         pos.x += 1
 
         river_width = 10
