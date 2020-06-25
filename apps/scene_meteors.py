@@ -74,7 +74,7 @@ class SceneMeteors:
             World.renderer = RaspberryPi(MC_SEVER_HOST, MC_SEVER_PORT)
 
             World.renderer.post_to_chat("Building Meteors Scene")
-            cls.pos = World.renderer.server.mc.entity.getTilePos(World.renderer.server.mc.getPlayerEntityId(BUILDER_NAME))
+            cls.pos = World.renderer.get_pos(BUILDER_NAME)
             cls.pos.x += 1
 
             cls.build_scene()

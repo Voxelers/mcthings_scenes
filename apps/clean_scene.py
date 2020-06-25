@@ -23,7 +23,7 @@ def main():
         World.renderer = RaspberryPi(MC_SEVER_HOST, MC_SEVER_PORT)
         scene_path = "scene_basic.mct"
         World.renderer.post_to_chat("Building a scene from " + scene_path)
-        pos = World.renderer.server.mc.entity.getTilePos(World.renderer.server.mc.getPlayerEntityId(BUILDER_NAME))
+        pos = World.renderer.get_pos(BUILDER_NAME)
         pos.z += 10
 
         World.renderer.post_to_chat("Cleaning a scene")

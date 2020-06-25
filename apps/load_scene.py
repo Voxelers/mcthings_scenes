@@ -25,7 +25,7 @@ def main():
         scene_path = "scene_basic.mct"
 
         World.renderer.post_to_chat("Building a scene from " + scene_path)
-        pos = World.renderer.server.mc.entity.getTilePos(World.renderer.server.mc.getPlayerEntityId(BUILDER_NAME))
+        pos = World.renderer.get_pos(BUILDER_NAME)
         pos.z += 10
 
         # Let's load the scene and build it
