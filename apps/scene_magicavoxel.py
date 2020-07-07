@@ -32,6 +32,7 @@ MODELS_FOLDER = "scene-MagicaVoxel-models"
 MODEL_MARGIN = 1  # blocks between models
 MODELS_URL = "https://github.com/mikelovesrobots/mmmm/archive/master.zip"
 MODELS_TOTAL = 487
+MODELS_PER_ROW = 10
 
 
 class SceneMagicaVoxel:
@@ -50,9 +51,15 @@ class SceneMagicaVoxel:
         if len(models_files) != MODELS_TOTAL:
             logging.error("Wrong number of models found: %i. Expected: %i" % (len(models_files), MODELS_TOTAL))
 
-        pos = Vec3(cls.pos.x, cls.pos.y, cls.pos.z)
+        init_pos = Vec3(cls.pos.x, cls.pos.y, cls.pos.z)
         models_files.sort()
-        for model_file in models_files:
+        pos_z = init_pos.z
+        max_row_length = 0
+        pos = init_pos
+        for i in range(0, len(models_files)):
+            model_file = models_files[i]
+            if i % MODELS_PER_ROW == 0:
+                pos = Vec3(init_pos.x, init_pos.y, pos.z + max_row_length)
             logging.debug("Creating model %s" % model_file)
             # Load the vox to get the dimensions
             vox = Vox(pos)
@@ -60,12 +67,15 @@ class SceneMagicaVoxel:
             vox.create()
             # Move to create space for the flip
             width = vox.end_position.x - pos.x
+            length = vox.end_position.z - pos.z
+            max_row_length = length if length > max_row_length else max_row_length
             vox = Vox(Vec3(pos.x + width, pos.y, pos.z))
             vox.file_path = join(models_folder, model_file)
             vox.create()
             vox.flip_x()
             vox.render()
-            pos = Vec3(vox.end_position.x + MODEL_MARGIN, pos.y, pos.z)
+            pos_x = vox.end_position.x + MODEL_MARGIN
+            pos = Vec3(pos_x, pos.y, pos.z)
 
     @classmethod
     def main(cls):
