@@ -1,3 +1,4 @@
 mcpi >= 1.2.0
-mcthings >= 0.49.6
+mcthings >= 0.52.0
 mcthings_extra >= 0.0.17
+requests
