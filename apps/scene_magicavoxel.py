@@ -54,10 +54,16 @@ class SceneMagicaVoxel:
         models_files.sort()
         for model_file in models_files:
             logging.debug("Creating model %s" % model_file)
+            # Load the vox to get the dimensions
             vox = Vox(pos)
             vox.file_path = join(models_folder, model_file)
             vox.create()
-            # vox.flip_x()
+            # Move to create space for the flip
+            width = vox.end_position.x - pos.x
+            vox = Vox(Vec3(pos.x + width, pos.y, pos.z))
+            vox.file_path = join(models_folder, model_file)
+            vox.create()
+            vox.flip_x()
             vox.render()
             pos = Vec3(vox.end_position.x + MODEL_MARGIN, pos.y, pos.z)
 
